@@ -64,7 +64,7 @@ if __name__ == "__main__":
     XAQueryEvents.queryState = 0
 
     for code in shcodelist:
-        time.sleep(1)
+        time.sleep(0.5)
         print(code)
 
         inXAQuery.LoadFromResFile("Res\\t8413.res")
@@ -83,5 +83,27 @@ if __name__ == "__main__":
         print("날짜     종가        시가       고가         저가")
         for i in range(nCount):
             print(inXAQuery.GetFieldData('t8413OutBlock1', 'date', i), ":", inXAQuery.GetFieldData('t8413OutBlock1', 'close', i), ":", inXAQuery.GetFieldData('t8413OutBlock1', 'open', i), ":", inXAQuery.GetFieldData('t8413OutBlock1', 'high', i), ":", inXAQuery.GetFieldData('t8413OutBlock1', 'low', i))
-
         XAQueryEvents.queryState = 0
+        time.sleep(0.5)
+        inXAQuery.LoadFromResFile("Res\\t3320.res")
+        inXAQuery.SetFieldData('t3320InBlock', 'gicode', 0, code)
+        inXAQuery.Request(0)
+
+        while XAQueryEvents.queryState == 0:
+            pythoncom.PumpWaitingMessages()
+
+        # Get FieldData
+        nCount = inXAQuery.GetBlockCount('t3320OutBlock1')
+        print("결산구분  per     pbr        roa       roe         bps")
+        for i in range(nCount):
+            print(inXAQuery.GetFieldData('t3320OutBlock1', 'gsym', i), ":",
+                  inXAQuery.GetFieldData('t3320OutBlock1', 'per', i), ":",
+                  inXAQuery.GetFieldData('t3320OutBlock1', 'pbr', i), ":",
+                  inXAQuery.GetFieldData('t3320OutBlock1', 'roa', i), ":",
+                  inXAQuery.GetFieldData('t3320OutBlock1', 'roe', i), ":",
+                  inXAQuery.GetFieldData('t3320OutBlock1', 'bps', i))
+        XAQueryEvents.queryState = 0
+
+
+
+
