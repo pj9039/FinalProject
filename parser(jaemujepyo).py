@@ -32,7 +32,10 @@ for c in code:
     k=0
     for i in range(0,74):
         for j in range(1,7):
-            matrix[i][j] = a[(j-1)+k]
+            if a[(j-1)+k]!="\xa0":
+                matrix[i][j] = a[(j-1)+k]
+            if a[(j-1)+k]=="\xa0":
+                matrix[i][j] = 0
         if k!=422:
             k=k+6
     for row in matrix:
