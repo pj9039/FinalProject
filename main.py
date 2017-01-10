@@ -2,6 +2,11 @@ import win32com.client
 import pythoncom
 import time
 import logininfo
+import pymysql
+import mysqlinfo
+myhost,myport, myuser, mypassword, mydb, mycharset = mysqlinfo.getmysqlinfo()
+conn = pymysql.connect(host=myhost,port=myport, user=myuser, password=mypassword, db=mydb, charset=mycharset)
+
 class XASessionEvents:
     logInState = 0
     def OnLogin(self, code, msg):
@@ -62,47 +67,62 @@ if __name__ == "__main__":
         shcodelist.append(inXAQuery.GetFieldData('t8430OutBlock', 'shcode', i))
     print(shcodelist)
     XAQueryEvents.queryState = 0
+    totalnum = len(shcodelist)
+    count = 0
+    try:
+        for code in shcodelist:
+            time.sleep(1)
+            print(code)
 
-    for code in shcodelist:
-        time.sleep(0.5)
-        print(code)
+            inXAQuery.LoadFromResFile("Res\\t8413.res")
+            inXAQuery.SetFieldData('t8413InBlock', 'shcode', 0, code)
+            inXAQuery.SetFieldData('t8413InBlock', 'gubun', 0, '2')
+            inXAQuery.SetFieldData('t8413InBlock', 'sdate', 0, '20130101')
+            inXAQuery.SetFieldData('t8413InBlock', 'edate', 0, '20170110')
+            inXAQuery.SetFieldData('t8413InBlock', 'comp_yn', 0, 'N')
+            inXAQuery.Request(0)
 
-        inXAQuery.LoadFromResFile("Res\\t8413.res")
-        inXAQuery.SetFieldData('t8413InBlock', 'shcode', 0, code)
-        inXAQuery.SetFieldData('t8413InBlock', 'gubun', 0, '2')
-        inXAQuery.SetFieldData('t8413InBlock', 'sdate', 0, '20140901')
-        inXAQuery.SetFieldData('t8413InBlock', 'edate', 0, '20140908')
-        inXAQuery.SetFieldData('t8413InBlock', 'comp_yn', 0, 'N')
-        inXAQuery.Request(0)
+            while XAQueryEvents.queryState == 0:
+                pythoncom.PumpWaitingMessages()
 
-        while XAQueryEvents.queryState == 0:
-            pythoncom.PumpWaitingMessages()
+            # Get FieldData
+            nCount = inXAQuery.GetBlockCount('t8413OutBlock1')
+            date = []
+            close = []
+            open = []
+            high = []
+            low = []
+            for i in range(nCount):
+                date.append(inXAQuery.GetFieldData('t8413OutBlock1', 'date', i))
+                close.append(inXAQuery.GetFieldData('t8413OutBlock1', 'close', i))
+                open.append(inXAQuery.GetFieldData('t8413OutBlock1', 'open', i))
+                high.append(inXAQuery.GetFieldData('t8413OutBlock1', 'high', i))
+                low.append(inXAQuery.GetFieldData('t8413OutBlock1', 'low', i))
+                #print(inXAQuery.GetFieldData('t8413OutBlock1', 'date', i), ":", inXAQuery.GetFieldData('t8413OutBlock1', 'close', i), ":", inXAQuery.GetFieldData('t8413OutBlock1', 'open', i), ":", inXAQuery.GetFieldData('t8413OutBlock1', 'high', i), ":", inXAQuery.GetFieldData('t8413OutBlock1', 'low', i))
+            XAQueryEvents.queryState = 0
+            for i in range(0, len(date)):
+                with conn.cursor() as curs:
+                    sql = "INSERT INTO stockprice(shcode, marketdate,closeprice,openprice,highprice,lowprice) VALUES (%s, %s, %s, %s, %s, %s)"
+                    curs.execute(sql, (code, date[i], close[i], open[i], high[i], low[i]))
+            print("총 코드수: ",totalnum,"현재진행결과: ",count)
+            count = count + 1
+            conn.commit()
 
-        # Get FieldData
-        nCount = inXAQuery.GetBlockCount('t8413OutBlock1')
-        print("날짜     종가        시가       고가         저가")
-        for i in range(nCount):
-            print(inXAQuery.GetFieldData('t8413OutBlock1', 'date', i), ":", inXAQuery.GetFieldData('t8413OutBlock1', 'close', i), ":", inXAQuery.GetFieldData('t8413OutBlock1', 'open', i), ":", inXAQuery.GetFieldData('t8413OutBlock1', 'high', i), ":", inXAQuery.GetFieldData('t8413OutBlock1', 'low', i))
-        XAQueryEvents.queryState = 0
-        time.sleep(0.5)
-        inXAQuery.LoadFromResFile("Res\\t3320.res")
-        inXAQuery.SetFieldData('t3320InBlock', 'gicode', 0, code)
-        inXAQuery.Request(0)
 
-        while XAQueryEvents.queryState == 0:
-            pythoncom.PumpWaitingMessages()
+    except:
+        pass
 
-        # Get FieldData
-        nCount = inXAQuery.GetBlockCount('t3320OutBlock1')
-        print("결산구분  per     pbr        roa       roe         bps")
-        for i in range(nCount):
-            print(inXAQuery.GetFieldData('t3320OutBlock1', 'gsym', i), ":",
-                  inXAQuery.GetFieldData('t3320OutBlock1', 'per', i), ":",
-                  inXAQuery.GetFieldData('t3320OutBlock1', 'pbr', i), ":",
-                  inXAQuery.GetFieldData('t3320OutBlock1', 'roa', i), ":",
-                  inXAQuery.GetFieldData('t3320OutBlock1', 'roe', i), ":",
-                  inXAQuery.GetFieldData('t3320OutBlock1', 'bps', i))
-        XAQueryEvents.queryState = 0
+conn.close()
+
+
+
+
+
+
+
+
+
+
 
 
 
