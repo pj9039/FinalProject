@@ -4,7 +4,7 @@ import xlwt
 import os
 from Classificate import Classi
 
-myfile = "test.xls"
+myfile = "BankruptcyStock.xls"
 if os.path.isfile(myfile):
     os.remove(myfile)
 else:    ## Show an error ##
@@ -133,9 +133,6 @@ for filelist in File_List:
                 except:
                     pass
 
-
-
-
             i += 1
     try:
         sheet.write(cnt, 7, "1")
@@ -143,4 +140,4 @@ for filelist in File_List:
         pass
     cnt = cnt+1
 
-wbk.save('test.xls')
+wbk.save('BankruptcyStock.xls')
