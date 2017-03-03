@@ -4,7 +4,7 @@ import xlwt # 엘셀 파일을 쓰기 위한 모듈
 import os # 파일을 다루기 위한 모듈
 from Classificate import Classi # 표준산업분류코드 분류를 위한 모듈
 
-myfile = "NoBankruptcyStock.xls" # 결과적으로 나올파일
+myfile = "NoBankruptcyStock.xls" # 결과적으로 나올파일.
 if os.path.isfile(myfile): # 기존에 파일이 있으면
     os.remove(myfile) # 삭제
 else:
