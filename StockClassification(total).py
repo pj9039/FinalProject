@@ -3,7 +3,8 @@ import glob # 경로에 대응되는 모든 파일을 쓰기위한 모듈
 import xlwt # 엘셀 파일을 쓰기 위한 모듈
 import os # 파일을 다루기 위한 모듈
 from Classificate import Classi # 표준산업분류코드 분류를 위한 모듈
-
+IncomeStatement = ""
+jaemusangtae = ""
 myfile = "BankruptcyStock.xls" # 결과적으로 나올파일
 if os.path.isfile(myfile): # 기존에 파일이 있으면
     os.remove(myfile) # 삭제
@@ -22,7 +23,9 @@ sheet.write(0, 4, '영업활동현금흐름')
 sheet.write(0, 5, '투자활동현금흐름')
 sheet.write(0, 6, '재무활동현금흐름')
 sheet.write(0, 7, '현금및현금성자산의순증가')
-sheet.write(0, 8, '상장폐지여부')
+sheet.write(0, 8, '유동자산')
+sheet.write(0, 9, '유동부채')
+sheet.write(0, 10, '상장폐지여부')
 cnt = 1 # 행
 for filelist in File_List:
     wb = xlrd.open_workbook(filelist) # 엑셀 파일 오픈
@@ -33,13 +36,23 @@ for filelist in File_List:
     for i in sheet_names:
         if('현금흐름표' in i):
             IncomeStatement = i
-    ws1 = wb.sheet_by_name(IncomeStatement) # 현금흐름표시트를 저장하는 변수
+        if ('재무상태' in i):
+            jaemusangtae = i
+    try:
+        ws1 = wb.sheet_by_name(IncomeStatement) # 현금흐름표시트를 저장하는 변수
+        ws2 = wb.sheet_by_name(jaemusangtae) # 재무상태표시트를 저장하는 변수
+    except:
+        sheet.write(cnt, 8, "0")
+        sheet.write(cnt, 9, "0")
+        pass
     # 첫번째 시트(기본정보)의 최대 행과 열
     ncol = ws.ncols
     nlow = ws.nrows
     # 선택 시트(현금흐름표)의 최대 행과 열
     ncol1 = ws1.ncols
     nlow1 = ws1.nrows
+    ncol2 = ws2.ncols
+    nlow2 = ws2.nrows
     # 종목명을 입력하기위해 파일이름을 쓰는데 확장자와 년도를 빼는 작업
     stockname = filelist.replace('.xls', '')
     stockname = stockname.replace('(2015)','')
@@ -69,10 +82,11 @@ for filelist in File_List:
                 sheet.write(cnt, 1, code)
             i += 1
     i=0
+    j=0
     # 현금흐름표의 최대 행까지 루프
     while i < nlow1:
         tmp = ws1.row_values(i)[0].replace(" ", "") # 영업활동 현금 흐름 처럼 띄어쓰기되어있는것을 띄어쓰기 제거
-        print("tmp: ", tmp)
+
         # 영업활동현금흐름 부분을 찾고 기록
         if ("영업활동현금흐름" in tmp or "영업활동으로인한현금흐름" in tmp or "영업에서창출된현금흐름" in tmp):
             NetIncome = ws1.row_values(i)[2]
@@ -102,10 +116,29 @@ for filelist in File_List:
                 sheet.write(cnt, 7, NetIncome)
             except:
                 pass
-
         i += 1
+    ###################재무상태
+    while j < nlow2:
+        tmp = ws2.row_values(j)[0].replace(" ", "") # 영업활동 현금 흐름 처럼 띄어쓰기되어있는것을 띄어쓰기 제거
+        # 영업활동현금흐름 부분을 찾고 기록
+        if ("유동자산" == tmp or "Ⅰ.유동자산" == tmp):
+            NetIncome = ws2.row_values(j)[2]
+            try:
+                sheet.write(cnt, 8, NetIncome)
+            except:
+                pass
+
+        if ("유동부채" == tmp or "Ⅰ.유동부채" == tmp):
+            NetIncome = ws2.row_values(j)[2]
+            try:
+                sheet.write(cnt, 9, NetIncome)
+            except:
+                pass
+
+        j += 1
+
     try:
-        sheet.write(cnt, 8, "1") # StockData폴더에 있는 종목들은 다 상장폐지된 종목이기 때문에 상장폐지가 되었다는 의미로 1를 입력
+        sheet.write(cnt, 10, "1") # StockData폴더에 있는 종목들은 다 상장폐지된 종목이기 때문에 상장폐지가 되었다는 의미로 1를 입력
         sheet.write(cnt, 3, "1")
     except:
         pass
@@ -119,15 +152,25 @@ for filelist in File_List1:
     sheet_names = wb.sheet_names()
     # 시트이름이 현금흐름표인것을 찾는다
     for i in sheet_names:
-        if('현금흐름표' in i):
+        if ('현금흐름표' in i):
             IncomeStatement = i
-    ws1 = wb.sheet_by_name(IncomeStatement) # 현금흐름표시트를 저장하는 변수
+        if ('재무상태' in i):
+            jaemusangtae = i
+    try:
+        ws1 = wb.sheet_by_name(IncomeStatement) # 현금흐름표시트를 저장하는 변수
+        ws2 = wb.sheet_by_name(jaemusangtae) # 재무상태표시트를 저장하는 변수
+    except:
+        sheet.write(cnt, 8, "0")
+        sheet.write(cnt, 9, "0")
+        pass
     # 첫번째 시트(기본정보)의 최대 행과 열
     ncol = ws.ncols
     nlow = ws.nrows
     # 선택 시트(현금흐름표)의 최대 행과 열
     ncol1 = ws1.ncols
     nlow1 = ws1.nrows
+    ncol2 = ws2.ncols
+    nlow2 = ws2.nrows
     # 종목명을 입력하기위해 파일이름을 쓰는데 확장자와 년도를 빼는 작업
     stockname = filelist.replace('.xls', '')
     stockname = stockname.replace('(2015)','')
@@ -140,7 +183,6 @@ for filelist in File_List1:
     # 엑셀파일마다 형식이 달라서 2행1열의 부분이 '문서정보'인 것과 '기 본 정 보'인 파일을 나누어서 표준산업분류코드를 찾는다.
     if (ws.row_values(1)[0] == '문서정보'):
         i = 0
-        j = 0
         # 최대 행길이 까지 루프
         while i < nlow:
             if("표준산업분류코드" in ws.row_values(i)[0]):
@@ -157,10 +199,11 @@ for filelist in File_List1:
                 sheet.write(cnt, 1, code)
             i += 1
     i=0
+    j=0
     # 현금흐름표의 최대 행까지 루프
     while i < nlow1:
         tmp = ws1.row_values(i)[0].replace(" ", "") # 영업활동 현금 흐름 처럼 띄어쓰기되어있는것을 띄어쓰기 제거
-        print("tmp: ", tmp)
+
         # 영업활동현금흐름 부분을 찾고 기록
         if ("영업활동현금흐름" in tmp or "영업활동으로인한현금흐름" in tmp or "영업에서창출된현금흐름" in tmp):
             NetIncome = ws1.row_values(i)[2]
@@ -190,8 +233,28 @@ for filelist in File_List1:
             except:
                 pass
         i += 1
+
+    ###################재무상태
+    while j < nlow2:
+        tmp = ws2.row_values(j)[0].replace(" ", "") # 영업활동 현금 흐름 처럼 띄어쓰기되어있는것을 띄어쓰기 제거
+        # 영업활동현금흐름 부분을 찾고 기록
+        if ("유동자산" == tmp or "Ⅰ.유동자산" == tmp):
+            NetIncome = ws2.row_values(j)[2]
+            try:
+                sheet.write(cnt, 8, NetIncome)
+            except:
+                pass
+
+        if ("유동부채" == tmp or "Ⅰ.유동부채" == tmp):
+            NetIncome = ws2.row_values(j)[2]
+            try:
+                sheet.write(cnt, 9, NetIncome)
+            except:
+                pass
+        j += 1
+
     try:
-        sheet.write(cnt, 8, "0") # StockData폴더에 있는 종목들은 다 상장폐지된 종목이기 때문에 상장폐지가 되었다는 의미로 1를 입력
+        sheet.write(cnt, 10, "0") # StockData폴더에 있는 종목들은 다 상장폐지된 종목이기 때문에 상장폐지가 되었다는 의미로 1를 입력
         sheet.write(cnt, 3, "1")
 
     except:
