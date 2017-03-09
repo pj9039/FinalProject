@@ -180,9 +180,15 @@ for filelist in File_List1:
             CashFlow = i
         if ('재무상태' in i):
             jaemusangtae = i
+        if ('손익계산서' in i):          #손익계산서시트 찾기
+            IncomeStatement = i
+        #elif ('포괄손익계산서' in i):
+        #    IncomeStatement = i
     try:
         ws1 = wb.sheet_by_name(CashFlow) # 현금흐름표시트를 저장하는 변수
         ws2 = wb.sheet_by_name(jaemusangtae) # 재무상태표시트를 저장하는 변수
+        ws3 = wb.sheet_by_name(IncomeStatement)     # 손익계산서시트를 저장하는 변수
+
     except:
         sheet.write(cnt, 8, "0")
         sheet.write(cnt, 9, "0")
@@ -195,6 +201,8 @@ for filelist in File_List1:
     nlow1 = ws1.nrows
     ncol2 = ws2.ncols
     nlow2 = ws2.nrows
+    ncol3 = ws3.ncols
+    nlow3 = ws3.nrows
     # 종목명을 입력하기위해 파일이름을 쓰는데 확장자와 년도를 빼는 작업
     stockname = filelist.replace('.xls', '')
     stockname = stockname.replace('(2015)','')
