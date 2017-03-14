@@ -22,10 +22,11 @@ xy = df.as_matrix().transpose()
 x_data = xy[3:-1].astype(np.float32)            # 3행 6열
 y_data = xy[-1].astype(np.float32)             # 1행 6열
 basis = x_data[0]
-x_data = preprocessing.normalize(x_data[1:], norm='l2')
+x_data = preprocessing.normalize(x_data[5:], norm='l2')
 x_data = np.insert(x_data, 0, basis, 0)
 X = tf.placeholder(tf.float32)
 Y = tf.placeholder(tf.float32)
+print(x_data)
 
 # feature별 가중치를 난수로 초기화. feature는 bias 포함해서 3개. 1행 3열.
 W = tf.Variable(tf.random_uniform([1, len(x_data)], -1.0, 1.0))
@@ -65,14 +66,18 @@ xy = df.as_matrix().transpose()
 
 x_data = xy[3:-1].astype(np.float32)            # 3행 6열
 basis = x_data[0]
-x_data = preprocessing.normalize(x_data[1:], norm='l2')
+x_data = preprocessing.normalize(x_data[5:], norm='l2')
 x_data = np.insert(x_data, 0, basis, 0)
 
 y_data = xy[-1].astype(np.float32)             # 1행 6열
 
-
 for i in range(0, len(x_data[0])):
-    print('[', x_data[0][i], x_data[1][i], x_data[2][i], x_data[3][i], x_data[4][i], y_data[i],']: ',sess.run(hypothesis, feed_dict={X: [[x_data[0][i]], [x_data[1][i]], [x_data[2][i]], [x_data[3][i]], [x_data[4][i]] ]}) > 0.75 )
+    #y_pred = sess.run(hypothesis , feed_dict={X: x_data})
+    #correct_prediction = tf.equal(tf.cast(tf.argmax(hypothesis,1), tf.float32), Y)
+    #accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
+    #print ("Accuracy: ",(sess.run(accuracy, feed_dict={X: x_data, Y: y_data})))
+    print('[', x_data[0][i], x_data[1][i], x_data[2][i], x_data[3][i], y_data[i],']: ',sess.run(hypothesis, feed_dict={X: [[x_data[0][i]], [x_data[1][i]], [x_data[2][i]], [x_data[3][i]] ]}) > 0.8)
+    #print('[', x_data[0][i], x_data[1][i], x_data[2][i], y_data[i],']: ',sess.run(hypothesis, feed_dict={X: [[x_data[0][i]], [x_data[1][i]], [x_data[2][i]] ]}) > 0.8 )
 
 
 sess.close()
