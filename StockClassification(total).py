@@ -14,7 +14,7 @@ else:
 
 File_List = glob.glob('StockData/*).xls') # StockData 폴더에 있는 모든 엑셀 데이터불러오기
 wbk = xlwt.Workbook() # 엑셀파일을 쓸 변수
-sheet = wbk.add_sheet('sheet 1') # 시트이름을 sheet 1
+sheet = wbk.add_sheet('sheet 1', cell_overwrite_ok=True) # 시트이름을 sheet 1
 ## 엑셀 1행에 쓰기 단위는 원, 상장폐지된 종목은 1 안된 종목은 0 ##
 sheet.write(0, 0, '기업명')                     #기본정보
 sheet.write(0, 1, '표준산업분류코드')           #기본정보
@@ -39,7 +39,7 @@ for filelist in File_List:
     for i in sheet_names:
         if('현금흐름표' in i):           #현금흐름표시트 찾기
             CashFlow = i
-        if ('재무상태' in i):            #재무상태표시트 찾기
+        if ('재무상태' in i or '대차대조' in i):            #재무상태표시트 찾기
             jaemusangtae = i
         if ('손익계산서' in i):          #손익계산서시트 찾기
             IncomeStatement = i
@@ -69,6 +69,9 @@ for filelist in File_List:
     stockname = stockname.replace('(2014)','')
     stockname = stockname.replace('(2013)','')
     stockname = stockname.replace('(2012)','')
+    stockname = stockname.replace('(2011)', '')
+    stockname = stockname.replace('(2010)', '')
+    stockname = stockname.replace('(2009)', '')
     stockname = stockname.replace('StockData\\', '')
     sheet.write(cnt, 0, stockname) # 종목명을 1열에 입력한다.
 
@@ -94,38 +97,40 @@ for filelist in File_List:
 
     i=0
     # 현금흐름표의 최대 행까지 루프
+    print(nlow1)
     while i < nlow1:
         tmp = ws1.row_values(i)[0].replace(" ", "") # 영업활동 현금 흐름 처럼 띄어쓰기되어있는것을 띄어쓰기 제거
 
         # 영업활동현금흐름 부분을 찾고 기록
         if ("영업활동현금흐름" in tmp or "영업활동으로인한현금흐름" in tmp or "영업에서창출된현금흐름" in tmp):
-            NetIncome = ws1.row_values(i)[2]
+            OperIncome = ws1.row_values(i)[1]
             try:
-                sheet.write(cnt, 4, NetIncome)
+                sheet.write(cnt, 4, OperIncome)
             except:
                 pass
         # 투자활동현금흐름 부분을 찾고 기록
         elif ("투자활동현금흐름" in tmp or "투자활동으로인한현금흐름" in tmp or "투자에서창출된현금흐름" in tmp):
-            NetIncome = ws1.row_values(i)[2]
+            ToojaIncome = ws1.row_values(i)[1]
             try:
-                sheet.write(cnt, 5, NetIncome)
+                sheet.write(cnt, 5, ToojaIncome)
             except:
                 pass
         # 재무활동현금흐름 부분을 찾고 기록
         elif ("재무활동현금흐름" in tmp or "재무활동으로인한현금흐름" in tmp or "재무에서창출된현금흐름" in tmp):
-            NetIncome = ws1.row_values(i)[2]
+            JaemooIncome = ws1.row_values(i)[1]
             try:
-                sheet.write(cnt, 6, NetIncome)
+                sheet.write(cnt, 6, JaemooIncome)
             except:
                 pass
         # 현금및현금성자산의순증가 부분을 찾고 기록
-
-        elif ("현금및현금성자산의순증가" in tmp or "현금및현금성자산의순증감" in tmp or "현금의증가" in tmp or "현금및현금성자산의증가" in tmp or "현금및현금성자산의증감" in tmp or "현금및현금성자산순증가" in tmp or "현금및현금성자산의감소" in tmp or "현금의감소" in tmp or "현금및현금성자산의순증가" in tmp or "현금의증가(감소)" in tmp or "현금및현금성자산의순증가(감소)" in tmp):
-            NetIncome = ws1.row_values(i)[2]
+        elif ("현금및현금성자산의순증가" in tmp or "현금및현금성자산의순증감" in tmp or "현금의증가" in tmp or "현금및현금성자산의증가" in tmp or "현금및현금성자산의증감" in tmp or "현금및현금성자산순증가" in tmp or "현금및현금성자산의감소" in tmp or "현금의감소" in tmp or "현금및현금성자산의순증가" in tmp or "현금의증가(감소)" in tmp or "현금및현금성자산의순증가(감소)" in tmp or "Ⅵ.현금의증가(감소)" in tmp or "Ⅴ.현금의증가(감소)" in tmp):
+            CashIncome = ws1.row_values(i)[1]
             try:
-                sheet.write(cnt, 7, NetIncome)
+                sheet.write(cnt, 7, CashIncome)
             except:
+
                 pass
+
         i += 1
 
     j=0
@@ -134,16 +139,16 @@ for filelist in File_List:
         tmp = ws2.row_values(j)[0].replace(" ", "") # 영업활동 현금 흐름 처럼 띄어쓰기되어있는것을 띄어쓰기 제거
         # 영업활동현금흐름 부분을 찾고 기록
         if ("유동자산" == tmp or "Ⅰ.유동자산" == tmp):
-            NetIncome = ws2.row_values(j)[2]
+            CurrentAssets = ws2.row_values(j)[1]
             try:
-                sheet.write(cnt, 8, NetIncome)
+                sheet.write(cnt, 8, CurrentAssets)
             except:
                 pass
 
         if ("유동부채" == tmp or "Ⅰ.유동부채" == tmp):
-            NetIncome = ws2.row_values(j)[2]
+            CurrentLiabilities = ws2.row_values(j)[1]
             try:
-                sheet.write(cnt, 9, NetIncome)
+                sheet.write(cnt, 9, CurrentLiabilities)
             except:
                 pass
         j += 1
@@ -153,8 +158,8 @@ for filelist in File_List:
     while j < nlow3:
         tmp = ws3.row_values(j)[0].replace(" ", "")  # 영업활동 현금 흐름 처럼 띄어쓰기되어있는것을 띄어쓰기 제거
         # 당기순이익/포괄순이익 부분을 찾고 기록
-        if ("당기순이익(손실)" == tmp or "Ⅷ.당기순이익(손실)" == tmp or "Ⅷ.총포괄손익" == tmp or "XII.총포괄손실" == tmp or "XⅢ.총포괄손익" == tmp or "총포괄순이익(손실)" == tmp or "총포괄이익(손실)" == tmp or "총포괄손익" == tmp or "당기총포괄이익" == tmp or "당기총포괄손익" == tmp or "연결당기총포괄(손)익" == tmp):
-            NetIncome = ws3.row_values(j)[2]
+        if ("당기순이익(손실)" in tmp or "Ⅷ.당기순이익(손실)" == tmp or "Ⅷ.총포괄손익" == tmp or "XII.총포괄손실" == tmp or "XⅢ.총포괄손익" == tmp or "총포괄순이익(손실)" == tmp or "총포괄이익(손실)" == tmp or "총포괄손익" == tmp or "당기총포괄이익" == tmp or "당기총포괄손익" == tmp or "연결당기총포괄(손)익" == tmp):
+            NetIncome = ws3.row_values(j)[1]
             try:
                 sheet.write(cnt, 10, NetIncome)
             except:
@@ -178,7 +183,7 @@ for filelist in File_List1:
     for i in sheet_names:
         if ('현금흐름표' in i):
             CashFlow = i
-        if ('재무상태' in i):
+        if ('재무상태' in i or '대차대조' in i):
             jaemusangtae = i
         if ('손익계산서' in i):          #손익계산서시트 찾기
             IncomeStatement = i
@@ -209,6 +214,9 @@ for filelist in File_List1:
     stockname = stockname.replace('(2014)','')
     stockname = stockname.replace('(2013)','')
     stockname = stockname.replace('(2012)','')
+    stockname = stockname.replace('(2011)', '')
+    stockname = stockname.replace('(2010)', '')
+    stockname = stockname.replace('(2009)', '')
     stockname = stockname.replace('StockData(NoBankruptcy)\\', '')
     sheet.write(cnt, 0, stockname) # 종목명을 1열에 입력한다.
 
@@ -232,35 +240,36 @@ for filelist in File_List1:
             i += 1
     i=0
     # 현금흐름표의 최대 행까지 루프
+    print(nlow1)
     while i < nlow1:
         tmp = ws1.row_values(i)[0].replace(" ", "") # 영업활동 현금 흐름 처럼 띄어쓰기되어있는것을 띄어쓰기 제거
 
         # 영업활동현금흐름 부분을 찾고 기록
         if ("영업활동현금흐름" in tmp or "영업활동으로인한현금흐름" in tmp or "영업에서창출된현금흐름" in tmp):
-            NetIncome = ws1.row_values(i)[2]
+            OperIncome = ws1.row_values(i)[1]
             try:
-                sheet.write(cnt, 4, NetIncome)
+                sheet.write(cnt, 4, OperIncome)
             except:
                 pass
         # 투자활동현금흐름 부분을 찾고 기록
         elif ("투자활동현금흐름" in tmp or "투자활동으로인한현금흐름" in tmp or "투자에서창출된현금흐름" in tmp):
-            NetIncome = ws1.row_values(i)[2]
+            ToojaIncome = ws1.row_values(i)[1]
             try:
-                sheet.write(cnt, 5, NetIncome)
+                sheet.write(cnt, 5, ToojaIncome)
             except:
                 pass
         # 재무활동현금흐름 부분을 찾고 기록
         elif ("재무활동현금흐름" in tmp or "재무활동으로인한현금흐름" in tmp or "재무에서창출된현금흐름" in tmp):
-            NetIncome = ws1.row_values(i)[2]
+            JaemooIncome = ws1.row_values(i)[1]
             try:
-                sheet.write(cnt, 6, NetIncome)
+                sheet.write(cnt, 6, JaemooIncome)
             except:
                 pass
         # 현금및현금성자산의순증가 부분을 찾고 기록
-        elif ("현금및현금성자산의순증가" in tmp or "현금및현금성자산의순증감" in tmp or "현금의증가" in tmp or "현금및현금성자산의증가" in tmp or "현금및현금성자산의증감" in tmp or "현금및현금성자산순증가" in tmp or "현금및현금성자산의감소" in tmp or "현금의감소" in tmp or "현금및현금성자산의순증가" in tmp or "현금의증가(감소)" in tmp or "현금및현금성자산의순증가(감소)" in tmp):
-            NetIncome = ws1.row_values(i)[2]
+        elif ("현금및현금성자산의순증가" in tmp or "현금및현금성자산의순증감" in tmp or "현금의증가" in tmp or "현금및현금성자산의증가" in tmp or "현금및현금성자산의증감" in tmp or "현금및현금성자산순증가" in tmp or "현금및현금성자산의감소" in tmp or "현금의감소" in tmp or "현금및현금성자산의순증가" in tmp or "현금의증가(감소)" in tmp or "현금및현금성자산의순증가(감소)" in tmp or "Ⅵ.현금의증가(감소)" in tmp or "Ⅴ.현금의증가(감소)" in tmp or "Ⅵ.현금의증가(감소)" in tmp):
+            CashIncome = ws1.row_values(i)[1]
             try:
-                sheet.write(cnt, 7, NetIncome)
+                sheet.write(cnt, 7, CashIncome)
             except:
                 pass
         i += 1
@@ -271,16 +280,16 @@ for filelist in File_List1:
         tmp = ws2.row_values(j)[0].replace(" ", "") # 영업활동 현금 흐름 처럼 띄어쓰기되어있는것을 띄어쓰기 제거
         # 영업활동현금흐름 부분을 찾고 기록
         if ("유동자산" == tmp or "Ⅰ.유동자산" == tmp):
-            NetIncome = ws2.row_values(j)[2]
+            CurrentAssets = ws2.row_values(j)[1]
             try:
-                sheet.write(cnt, 8, NetIncome)
+                sheet.write(cnt, 8, CurrentAssets)
             except:
                 pass
 
         if ("유동부채" == tmp or "Ⅰ.유동부채" == tmp):
-            NetIncome = ws2.row_values(j)[2]
+            CurrentLiabilities = ws2.row_values(j)[1]
             try:
-                sheet.write(cnt, 9, NetIncome)
+                sheet.write(cnt, 9, CurrentLiabilities)
             except:
                 pass
         j += 1
@@ -290,12 +299,13 @@ for filelist in File_List1:
     while j < nlow3:
         tmp = ws3.row_values(j)[0].replace(" ", "")  # 영업활동 현금 흐름 처럼 띄어쓰기되어있는것을 띄어쓰기 제거
         # 당기순이익/포괄순이익 부분을 찾고 기록
-        if ("당기순이익(손실)" == tmp or "Ⅷ.당기순이익(손실)" == tmp or "Ⅷ.총포괄손익" == tmp or "XII.총포괄손실" == tmp or "XⅢ.총포괄손익" == tmp or "총포괄순이익(손실)" == tmp or "총포괄이익(손실)" == tmp or "총포괄손익" == tmp or "당기총포괄이익" == tmp or "당기총포괄손익" == tmp or "연결당기총포괄(손)익" == tmp):
-            NetIncome = ws3.row_values(j)[2]
+        if ("당기순이익(손실)" == tmp or "Ⅷ.당기순이익(손실)" == tmp or "Ⅷ.총포괄손익" == tmp or "XII.총포괄손실" == tmp or "XⅢ.총포괄손익" == tmp or "총포괄순이익(손실)" == tmp or "총포괄이익(손실)" == tmp or "총포괄손익" == tmp or "당기총포괄이익" == tmp or "당기총포괄손익" == tmp or "연결당기총포괄(손)익" == tmp or "Ⅹ.당기순이익(손실)" == tmp or "XIV.당기순이익(손실)" == tmp or "XⅡ.당기순이익(손실)" == tmp):
+            NetIncome = ws3.row_values(j)[1]
             try:
                 sheet.write(cnt, 10, NetIncome)
             except:
                 pass
+
         j += 1
 
     try:
