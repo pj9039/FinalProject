@@ -3,7 +3,8 @@ import urllib.request
 import pymysql
 from bs4 import BeautifulSoup
 
-from ML import Allcode, mysqlinfo
+from ML import Allcode
+from ML.NoUpload import mysqlinfo
 
 myhost,myport, myuser, mypassword, mydb, mycharset = mysqlinfo.getmysqlinfo()
 conn = pymysql.connect(host=myhost,port=myport, user=myuser, password=mypassword, db=mydb, charset=mycharset)

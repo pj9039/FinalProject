@@ -1,8 +1,8 @@
-import pymysql
-import mysqlinfo
 import matplotlib.pyplot as plt
+import pymysql
 from fastpip import pip
 
+from ML.NoUpload import mysqlinfo
 
 # Open database connection
 myhost, myport, myuser, mypassword, mydb, mycharset = mysqlinfo.getmysqlinfo()
@@ -14,7 +14,8 @@ cursor = conn.cursor(pymysql.cursors.DictCursor)
 
 
 # Execute SQL
-sql = "SELECT * FROM stockprice WHERE shcode=%s"
+sql = "SELECT * FROM stockprice WHERE shcode=%s AND marketdate BETWEEN '2015-01-01' AND '2015-03-29'"
+
 shcode = "000020"     #동화약품(000020)
 cursor.execute(sql, shcode)
 
@@ -35,7 +36,7 @@ for row in rows:
 
 
 # Perceptually Important Points
-result = pip(array,6)
+result = pip(array,7)
 print(result)
 plt.plot(graph)
 

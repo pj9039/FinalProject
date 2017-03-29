@@ -5,7 +5,8 @@ import pymysql
 import pythoncom
 import win32com.client
 
-from ML import logininfo, mysqlinfo
+from ML import mysqlinfo
+from ML.NoUpload import logininfo
 
 myhost,myport, myuser, mypassword, mydb, mycharset = mysqlinfo.getmysqlinfo()
 conn = pymysql.connect(host=myhost,port=myport, user=myuser, password=mypassword, db=mydb, charset=mycharset)
