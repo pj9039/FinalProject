@@ -1,9 +1,9 @@
 import urllib.request
-from bs4 import BeautifulSoup
-import DataDeclare
-import Allcode
-import mysqlinfo
+
 import pymysql
+from bs4 import BeautifulSoup
+
+from ML import Allcode, mysqlinfo
 
 myhost,myport, myuser, mypassword, mydb, mycharset = mysqlinfo.getmysqlinfo()
 code = Allcode.getcode()
