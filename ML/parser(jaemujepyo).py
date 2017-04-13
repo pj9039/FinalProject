@@ -3,8 +3,8 @@ import urllib.request
 import pymysql
 from bs4 import BeautifulSoup
 
+import mysqlinfo
 from ML import Allcode
-from ML.NoUpload import mysqlinfo
 
 myhost,myport, myuser, mypassword, mydb, mycharset = mysqlinfo.getmysqlinfo()
 code = Allcode.getcode()

@@ -1,7 +1,7 @@
 import pymysql
 from fastpip import pip
 
-from ML.NoUpload import mysqlinfo
+import mysqlinfo
 
 # Open database connection
 myhost, myport, myuser, mypassword, mydb, mycharset = mysqlinfo.getmysqlinfo()

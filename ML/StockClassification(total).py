@@ -14,26 +14,42 @@ if os.path.isfile(myfile): # 기존에 파일이 있으면
     os.remove(myfile) # 삭제
 else:
     print("Error: %s file not found" % myfile) # 없으면 없다고 표시
-
-File_List = glob.glob('StockData/*).xls') # StockData 폴더에 있는 모든 엑셀 데이터불러오기
+File_List = glob.glob('../StockData/*).xls') # StockData 폴더에 있는 모든 엑셀 데이터불러오기
 wbk = xlwt.Workbook() # 엑셀파일을 쓸 변수
 sheet = wbk.add_sheet('sheet 1', cell_overwrite_ok=True) # 시트이름을 sheet 1
 ## 엑셀 1행에 쓰기 단위는 원, 상장폐지된 종목은 1 안된 종목은 0 ##
-sheet.write(0, 0, '기업명')                     #기본정보
-sheet.write(0, 1, '표준산업분류코드')           #기본정보
-sheet.write(0, 2, '표준산업분류')               #기본정보
-sheet.write(0, 3, 'basis')
-sheet.write(0, 4, '영업활동현금흐름')           #현금흐름표
-sheet.write(0, 5, '투자활동현금흐름')           #현금흐름표
-sheet.write(0, 6, '재무활동현금흐름')           #현금흐름표
-sheet.write(0, 7, '현금및현금성자산의순증가')   #현금흐름표
-sheet.write(0, 8, '유동자산')                   #재무상태
-sheet.write(0, 9, '유동부채')                   #재무상태
-sheet.write(0, 10, '당기/포괄순이익')           #손익계산서
+CompanyNameIdx = 0
+StdInduCodeIdx = 1
+StdInduIdx = 2
+BasisIdx = 3
+OperIncomeIdx = 4
+ToojaIncomeIdx = 5
+JaemooIncomeIdx = 6
+CashIncomeIdx =  7
+CurrentAssetsIdx = 8
+NonCurrentAssetsIdx = 9
+CurrentLiabilitiesIdx = 10
+NonCurrentLiabilitiesIdx = 11
+NetIncomeIdx = 12
+BankruptcyIdx = 13
+sheet.write(0, CompanyNameIdx, '기업명')                     #기본정보
+sheet.write(0, StdInduCodeIdx, '표준산업분류코드')           #기본정보
+sheet.write(0, StdInduIdx, '표준산업분류')               #기본정보
+sheet.write(0, BasisIdx, 'basis')
+sheet.write(0, OperIncomeIdx, '영업활동현금흐름')           #현금흐름표
+sheet.write(0, ToojaIncomeIdx, '투자활동현금흐름')           #현금흐름표
+sheet.write(0, JaemooIncomeIdx, '재무활동현금흐름')           #현금흐름표
+sheet.write(0, CashIncomeIdx, '현금및현금성자산의순증가')   #현금흐름표
+sheet.write(0, CurrentAssetsIdx, '유동자산')                   #재무상태
+sheet.write(0, NonCurrentAssetsIdx, '비유동자산')                   #재무상태
+sheet.write(0, CurrentLiabilitiesIdx, '유동부채')                   #재무상태
+sheet.write(0, NonCurrentLiabilitiesIdx, '비유동부채')                   #재무상태
+sheet.write(0, NetIncomeIdx, '당기/포괄순이익')           #손익계산서
 #sheet.write(0, 11, '영업이익(손실)')           #손익계산서
-sheet.write(0, 11, '상장폐지여부')
+sheet.write(0, BankruptcyIdx, '상장폐지여부')
 cnt = 1 # 행
 for filelist in File_List:
+
     wb = xlrd.open_workbook(filelist) # 엑셀 파일 오픈
     ws = wb.sheet_by_index(0) # 불러온 엑셀 파일의 첫번째 시트
     print(filelist)
@@ -53,8 +69,10 @@ for filelist in File_List:
         ws2 = wb.sheet_by_name(jaemusangtae)        # 재무상태표시트를 저장하는 변수
         ws3 = wb.sheet_by_name(IncomeStatement)     # 손익계산서시트를 저장하는 변수
     except:
-        sheet.write(cnt, 8, "0")
-        sheet.write(cnt, 9, "0")
+        sheet.write(cnt, CurrentAssetsIdx, "0")
+        sheet.write(cnt, CurrentLiabilitiesIdx, "0")
+        sheet.write(cnt, NonCurrentAssetsIdx, "0")
+        sheet.write(cnt, NonCurrentLiabilitiesIdx, "0")
         pass
     # 첫번째 시트(기본정보)의 최대 행과 열
     ncol = ws.ncols
@@ -75,8 +93,8 @@ for filelist in File_List:
     stockname = stockname.replace('(2011)', '')
     stockname = stockname.replace('(2010)', '')
     stockname = stockname.replace('(2009)', '')
-    stockname = stockname.replace('StockData\\', '')
-    sheet.write(cnt, 0, stockname) # 종목명을 1열에 입력한다.
+    stockname = stockname.replace('../StockData\\', '')
+    sheet.write(cnt, CompanyNameIdx, stockname) # 종목명을 1열에 입력한다.
 
     # 엑셀파일마다 형식이 달라서 2행1열의 부분이 '문서정보'인 것과 '기 본 정 보'인 파일을 나누어서 표준산업분류코드를 찾는다.
     if (ws.row_values(1)[0] == '문서정보'):
@@ -87,7 +105,7 @@ for filelist in File_List:
             if("표준산업분류코드" in ws.row_values(i)[0]):
                 code = (ws.row_values(i)[0]).split()[2].strip()
                 Classi(code,sheet,cnt)
-                sheet.write(cnt, 1, code)
+                sheet.write(cnt, StdInduCodeIdx , code)
             i += 1
     if (ws.row_values(3)[0] == '기 본 정 보'):
         i = 0
@@ -95,7 +113,7 @@ for filelist in File_List:
             if (ws.row_values(i)[0].strip() == '표준산업분류코드'):
                 code = (ws.row_values(i)[1].strip())
                 Classi(code, sheet, cnt)
-                sheet.write(cnt, 1, code)
+                sheet.write(cnt, StdInduCodeIdx , code)
             i += 1
 
     i=0
@@ -108,28 +126,28 @@ for filelist in File_List:
         if ("영업활동현금흐름" in tmp or "영업활동으로인한현금흐름" in tmp or "영업에서창출된현금흐름" in tmp):
             OperIncome = ws1.row_values(i)[1]
             try:
-                sheet.write(cnt, 4, OperIncome)
+                sheet.write(cnt, OperIncomeIdx , OperIncome)
             except:
                 pass
         # 투자활동현금흐름 부분을 찾고 기록
         elif ("투자활동현금흐름" in tmp or "투자활동으로인한현금흐름" in tmp or "투자에서창출된현금흐름" in tmp):
             ToojaIncome = ws1.row_values(i)[1]
             try:
-                sheet.write(cnt, 5, ToojaIncome)
+                sheet.write(cnt, ToojaIncomeIdx , ToojaIncome)
             except:
                 pass
         # 재무활동현금흐름 부분을 찾고 기록
         elif ("재무활동현금흐름" in tmp or "재무활동으로인한현금흐름" in tmp or "재무에서창출된현금흐름" in tmp):
             JaemooIncome = ws1.row_values(i)[1]
             try:
-                sheet.write(cnt, 6, JaemooIncome)
+                sheet.write(cnt, JaemooIncomeIdx , JaemooIncome)
             except:
                 pass
         # 현금및현금성자산의순증가 부분을 찾고 기록
         elif ("현금및현금성자산의순증가" in tmp or "현금및현금성자산의순증감" in tmp or "현금의증가" in tmp or "현금및현금성자산의증가" in tmp or "현금및현금성자산의증감" in tmp or "현금및현금성자산순증가" in tmp or "현금및현금성자산의감소" in tmp or "현금의감소" in tmp or "현금및현금성자산의순증가" in tmp or "현금의증가(감소)" in tmp or "현금및현금성자산의순증가(감소)" in tmp or "Ⅵ.현금의증가(감소)" in tmp or "Ⅴ.현금의증가(감소)" in tmp):
             CashIncome = ws1.row_values(i)[1]
             try:
-                sheet.write(cnt, 7, CashIncome)
+                sheet.write(cnt, CashIncomeIdx , CashIncome)
             except:
 
                 pass
@@ -144,16 +162,30 @@ for filelist in File_List:
         if ("유동자산" == tmp or "Ⅰ.유동자산" == tmp):
             CurrentAssets = ws2.row_values(j)[1]
             try:
-                sheet.write(cnt, 8, CurrentAssets)
+                sheet.write(cnt, CurrentAssetsIdx , CurrentAssets)
+            except:
+                pass
+        elif ("비유동자산" == tmp or "Ⅲ.비유동자산" == tmp or "Ⅱ.비유동자산" == tmp):
+            NonCurrentAssets = ws2.row_values(j)[1]
+            try:
+                sheet.write(cnt, NonCurrentAssetsIdx , NonCurrentAssets)
             except:
                 pass
 
-        if ("유동부채" == tmp or "Ⅰ.유동부채" == tmp):
+        elif ("유동부채" == tmp or "Ⅰ.유동부채" == tmp):
             CurrentLiabilities = ws2.row_values(j)[1]
             try:
-                sheet.write(cnt, 9, CurrentLiabilities)
+                sheet.write(cnt, CurrentLiabilitiesIdx , CurrentLiabilities)
             except:
                 pass
+
+        elif ("비유동부채" == tmp or "Ⅱ.비유동부채" == tmp):
+            NonCurrentLiabilities = ws2.row_values(j)[1]
+            try:
+                sheet.write(cnt, NonCurrentLiabilitiesIdx , NonCurrentLiabilities)
+            except:
+                pass
+
         j += 1
 
     j=0
@@ -164,19 +196,19 @@ for filelist in File_List:
         if ("당기순이익(손실)" in tmp or "Ⅷ.당기순이익(손실)" == tmp or "Ⅷ.총포괄손익" == tmp or "XII.총포괄손실" == tmp or "XⅢ.총포괄손익" == tmp or "총포괄순이익(손실)" == tmp or "총포괄이익(손실)" == tmp or "총포괄손익" == tmp or "당기총포괄이익" == tmp or "당기총포괄손익" == tmp or "연결당기총포괄(손)익" == tmp):
             NetIncome = ws3.row_values(j)[1]
             try:
-                sheet.write(cnt, 10, NetIncome)
+                sheet.write(cnt, NetIncomeIdx , NetIncome)
             except:
                 pass
         j += 1
 
     try:
-        sheet.write(cnt, 11, "1") # StockData폴더에 있는 종목들은 다 상장폐지된 종목이기 때문에 상장폐지가 되었다는 의미로 1를 입력
-        sheet.write(cnt, 3, "1")
+        sheet.write(cnt, BankruptcyIdx , "1") # StockData폴더에 있는 종목들은 다 상장폐지된 종목이기 때문에 상장폐지가 되었다는 의미로 1를 입력
+        sheet.write(cnt, BasisIdx , "1")
     except:
         pass
     cnt = cnt+1
 
-File_List1 = glob.glob('StockData(NoBankruptcy)/*.xls') # StockData 폴더에 있는 모든 엑셀 데이터불러오기
+File_List1 = glob.glob('../StockData(NoBankruptcy)/*.xls') # StockData 폴더에 있는 모든 엑셀 데이터불러오기
 for filelist in File_List1:
     wb = xlrd.open_workbook(filelist) # 엑셀 파일 오픈
     ws = wb.sheet_by_index(0) # 불러온 엑셀 파일의 첫번째 시트
@@ -198,8 +230,10 @@ for filelist in File_List1:
         ws3 = wb.sheet_by_name(IncomeStatement)     # 손익계산서시트를 저장하는 변수
 
     except:
-        sheet.write(cnt, 8, "0")
-        sheet.write(cnt, 9, "0")
+        sheet.write(cnt, CurrentAssetsIdx , "0")
+        sheet.write(cnt, CurrentLiabilitiesIdx , "0")
+        sheet.write(cnt, NonCurrentAssetsIdx, "0")
+        sheet.write(cnt, NonCurrentLiabilitiesIdx, "0")
         pass
     # 첫번째 시트(기본정보)의 최대 행과 열
     ncol = ws.ncols
@@ -220,8 +254,8 @@ for filelist in File_List1:
     stockname = stockname.replace('(2011)', '')
     stockname = stockname.replace('(2010)', '')
     stockname = stockname.replace('(2009)', '')
-    stockname = stockname.replace('StockData(NoBankruptcy)\\', '')
-    sheet.write(cnt, 0, stockname) # 종목명을 1열에 입력한다.
+    stockname = stockname.replace('../StockData(NoBankruptcy)\\', '')
+    sheet.write(cnt, CompanyNameIdx , stockname) # 종목명을 1열에 입력한다.
 
     # 엑셀파일마다 형식이 달라서 2행1열의 부분이 '문서정보'인 것과 '기 본 정 보'인 파일을 나누어서 표준산업분류코드를 찾는다.
     if (ws.row_values(1)[0] == '문서정보'):
@@ -231,7 +265,7 @@ for filelist in File_List1:
             if("표준산업분류코드" in ws.row_values(i)[0]):
                 code = (ws.row_values(i)[0]).split()[2].strip()
                 Classi(code,sheet,cnt)
-                sheet.write(cnt, 1, code)
+                sheet.write(cnt, StdInduCodeIdx , code)
             i += 1
     if (ws.row_values(3)[0] == '기 본 정 보'):
         i = 0
@@ -239,11 +273,10 @@ for filelist in File_List1:
             if (ws.row_values(i)[0].strip() == '표준산업분류코드'):
                 code = (ws.row_values(i)[1].strip())
                 Classi(code, sheet, cnt)
-                sheet.write(cnt, 1, code)
+                sheet.write(cnt, StdInduCodeIdx , code)
             i += 1
     i=0
     # 현금흐름표의 최대 행까지 루프
-    print(nlow1)
     while i < nlow1:
         tmp = ws1.row_values(i)[0].replace(" ", "") # 영업활동 현금 흐름 처럼 띄어쓰기되어있는것을 띄어쓰기 제거
 
@@ -251,28 +284,28 @@ for filelist in File_List1:
         if ("영업활동현금흐름" in tmp or "영업활동으로인한현금흐름" in tmp or "영업에서창출된현금흐름" in tmp):
             OperIncome = ws1.row_values(i)[1]
             try:
-                sheet.write(cnt, 4, OperIncome)
+                sheet.write(cnt, OperIncomeIdx , OperIncome)
             except:
                 pass
         # 투자활동현금흐름 부분을 찾고 기록
         elif ("투자활동현금흐름" in tmp or "투자활동으로인한현금흐름" in tmp or "투자에서창출된현금흐름" in tmp):
             ToojaIncome = ws1.row_values(i)[1]
             try:
-                sheet.write(cnt, 5, ToojaIncome)
+                sheet.write(cnt, ToojaIncomeIdx , ToojaIncome)
             except:
                 pass
         # 재무활동현금흐름 부분을 찾고 기록
         elif ("재무활동현금흐름" in tmp or "재무활동으로인한현금흐름" in tmp or "재무에서창출된현금흐름" in tmp):
             JaemooIncome = ws1.row_values(i)[1]
             try:
-                sheet.write(cnt, 6, JaemooIncome)
+                sheet.write(cnt, JaemooIncomeIdx , JaemooIncome)
             except:
                 pass
         # 현금및현금성자산의순증가 부분을 찾고 기록
         elif ("현금및현금성자산의순증가" in tmp or "현금및현금성자산의순증감" in tmp or "현금의증가" in tmp or "현금및현금성자산의증가" in tmp or "현금및현금성자산의증감" in tmp or "현금및현금성자산순증가" in tmp or "현금및현금성자산의감소" in tmp or "현금의감소" in tmp or "현금및현금성자산의순증가" in tmp or "현금의증가(감소)" in tmp or "현금및현금성자산의순증가(감소)" in tmp or "Ⅵ.현금의증가(감소)" in tmp or "Ⅴ.현금의증가(감소)" in tmp or "Ⅵ.현금의증가(감소)" in tmp):
             CashIncome = ws1.row_values(i)[1]
             try:
-                sheet.write(cnt, 7, CashIncome)
+                sheet.write(cnt, CashIncomeIdx , CashIncome)
             except:
                 pass
         i += 1
@@ -285,14 +318,27 @@ for filelist in File_List1:
         if ("유동자산" == tmp or "Ⅰ.유동자산" == tmp):
             CurrentAssets = ws2.row_values(j)[1]
             try:
-                sheet.write(cnt, 8, CurrentAssets)
+                sheet.write(cnt, CurrentAssetsIdx , CurrentAssets)
+            except:
+                pass
+        elif ("비유동자산" == tmp or "Ⅲ.비유동자산" == tmp or "Ⅱ.비유동자산" == tmp):
+            NonCurrentAssets = ws2.row_values(j)[1]
+            try:
+                sheet.write(cnt, NonCurrentAssetsIdx , NonCurrentAssets)
             except:
                 pass
 
-        if ("유동부채" == tmp or "Ⅰ.유동부채" == tmp):
+        elif ("유동부채" == tmp or "Ⅰ.유동부채" == tmp):
             CurrentLiabilities = ws2.row_values(j)[1]
             try:
-                sheet.write(cnt, 9, CurrentLiabilities)
+                sheet.write(cnt, CurrentLiabilitiesIdx , CurrentLiabilities)
+            except:
+                pass
+
+        elif ("비유동부채" == tmp or "Ⅱ.비유동부채" == tmp):
+            NonCurrentLiabilities = ws2.row_values(j)[1]
+            try:
+                sheet.write(cnt, NonCurrentLiabilitiesIdx , NonCurrentLiabilities)
             except:
                 pass
         j += 1
@@ -302,18 +348,18 @@ for filelist in File_List1:
     while j < nlow3:
         tmp = ws3.row_values(j)[0].replace(" ", "")  # 영업활동 현금 흐름 처럼 띄어쓰기되어있는것을 띄어쓰기 제거
         # 당기순이익/포괄순이익 부분을 찾고 기록
-        if ("당기순이익(손실)" == tmp or "Ⅷ.당기순이익(손실)" == tmp or "Ⅷ.총포괄손익" == tmp or "XII.총포괄손실" == tmp or "XⅢ.총포괄손익" == tmp or "총포괄순이익(손실)" == tmp or "총포괄이익(손실)" == tmp or "총포괄손익" == tmp or "당기총포괄이익" == tmp or "당기총포괄손익" == tmp or "연결당기총포괄(손)익" == tmp or "Ⅹ.당기순이익(손실)" == tmp or "XIV.당기순이익(손실)" == tmp or "XⅡ.당기순이익(손실)" == tmp):
+        if ("당기순이익(손실)" == tmp or "Ⅷ.당기순이익(손실)" == tmp or "Ⅷ.총포괄손익" == tmp or "XII.총포괄손실" == tmp or "XⅢ.총포괄손익" == tmp or "총포괄순이익(손실)" == tmp or "총포괄이익(손실)" == tmp or "총포괄손익" == tmp or "당기총포괄이익" == tmp or "당기총포괄손익" == tmp or "연결당기총포괄(손)익" == tmp or "당기순이익(손실)" in tmp):
             NetIncome = ws3.row_values(j)[1]
             try:
-                sheet.write(cnt, 10, NetIncome)
+                sheet.write(cnt, NetIncomeIdx , NetIncome)
             except:
                 pass
 
         j += 1
 
     try:
-        sheet.write(cnt, 11, "0") # StockData폴더에 있는 종목들은 다 상장폐지된 종목이기 때문에 상장폐지가 되었다는 의미로 1를 입력
-        sheet.write(cnt, 3, "1")
+        sheet.write(cnt, BankruptcyIdx , "0") # StockData폴더에 있는 종목들은 다 상장폐지된 종목이기 때문에 상장폐지가 되었다는 의미로 1를 입력
+        sheet.write(cnt, BasisIdx , "1")
 
     except:
         pass
