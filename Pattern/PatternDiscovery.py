@@ -1,59 +1,47 @@
 import matplotlib.pyplot as plt
-import pymysql
+import numpy
+import time
+from scipy.stats import pearsonr
 from fastpip import pip
-
-import mysqlinfo
-
-# Open database connection
-myhost, myport, myuser, mypassword, mydb, mycharset = mysqlinfo.getmysqlinfo()
-conn = pymysql.connect(host=myhost, port=myport, user=myuser, password=mypassword, db=mydb, charset=mycharset)
+import Pattern.QueryStockdata as shquery
+import Pattern.PatternType as pttype
 
 
-# create Dictionary Cursor from connection
-cursor = conn.cursor(pymysql.cursors.DictCursor)
+# Pattern Finder
+def findpattern(p_type, p_low, p_high, period):
+    # p_type : pattern type index
+    # p_low : low price; it's used to search shcode
+    # p_high : high price; it's used to search shcode
+    # period : pattern period
+    start_time = time.time()
 
+    compare, n = pttype.patterntype(p_type)         # choose pattern by p_type
+    rows = shquery.makequerylist(p_low, p_high)     # stock filtering
+    print("p_low=", p_low, "와 p_high=", p_high, " 조건에 부합한 종목코드 : ", rows)
+    data_array = []
+    for row in rows:                           # each stock
+        tmps = shquery.getstockprice(row)       # get stock data from DB
+        temp_array = []     # stock price data
+        pip_array = []      # list of found index
+        i = -1
+        for tmp in tmps:   # append data for PIP
+            i += 1
+            temp_array.append([i, int(tmp['closeprice'])])
 
-# Execute SQL
-sql = "SELECT * FROM stockprice WHERE shcode=%s AND marketdate BETWEEN '2015-01-01' AND '2015-03-29'"
+        for k in range(0, len(temp_array) - period):    # find relevant index
+            result = pip(temp_array[k:k + period], n)
+            r_row, p_value = pearsonr(numpy.array(result)[:, 1], numpy.array(compare)[:, 1])
+            if r_row > 0.7:
+                print("종목코드 ", row, "에서 index가 ", k, "일 때, 피어슨상관계수 : ", r_row)
+                pip_array.append(k)  # k is index
 
-shcode = "000020"     #동화약품(000020)
-cursor.execute(sql, shcode)
+        # fill data
+        data_array.append(row)
+        data_array.append(pip_array)
 
+    print("┌기간=", period, "에서 패턴발견 알고리즘 적용결과 리스트 구현")
+    print(data_array)
+    # measure of running-time
+    print("--- processing time : %s seconds ---" % (time.time() - start_time))
 
-# Fetch
-rows = cursor.fetchall()
-i = -1
-array = []
-graph = []
-for row in rows:
-    #print(row)
-    i = i + 1
-    #print(pip([i, int(row['closeprice'])], 5))
-    #print([i, int(row['closeprice'])])
-    array.append([i,int(row['closeprice'])])
-    graph.append(int(row['closeprice']))
-#print(array)
-
-
-# Perceptually Important Points
-result = pip(array,7)
-print(result)
-plt.plot(graph)
-
-
-# Perceptually Important Points
-index = []
-data = []
-for idx in result:
-    i = i + 1
-    index.append(idx[0])
-    data.append(idx[1])
-#index = [0,43,101,174,339,456,499]
-#data = [5500, 6470, 9870, 7080, 10800, 7280, 7950]
-plt.plot(index, data)
-plt.grid(True)
-plt.show()
-
-
-# disconnect
-conn.close()
+    return data_array
