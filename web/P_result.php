@@ -4,15 +4,15 @@
 	if(mysqli_connect_errno($db)){
 		echo "연결실패 : ".mysqli_connect_error();
 	} else {
-		echo "성공";
+		//echo "성공";
 	}
 ?>
 
 <!--페이징 변수 정의-->
 <?
 
-	//select marketdate from stockprice order by marketdate desc limit 1;	//가장 최근 날짜 조회
-	//select * from stockprice where marketdate='변수(2017-01-10)'
+	$price1 = $_POST['price1'];
+	$price2 = $_POST['price2'];
 	//$shcode = $_POST['shcode'];
 	
 	// 검색 날짜 조건 설정
@@ -42,8 +42,9 @@ if ($b_end_page > $total_page){	//마지막 페이지가 총 페이지보다 클
 	}
 
 // 리스트 출력을 위한 쿼리
-		$date_query = "SELECT * FROM stockprice where marketdate='".$date_result."' limit ".$start_list.", ".$list;
-		
+		//$date_query = "SELECT * FROM stockprice where marketdate='".$date_result."' limit ".$start_list.", ".$list;
+		$date_query = "SELECT * FROM stockprice where closeprice Between ".$price1." and ".$price2." order by marketdate desc ".$start_list.", ".$list;
+
 		// 가장 최근날짜 검색 결과
 		$result = mysqli_query($db,$date_query);
 		
@@ -119,43 +120,43 @@ if ($b_end_page > $total_page){	//마지막 페이지가 총 페이지보다 클
 	<table width="600" height="500" border="0" style="text-align: center;">
 	<tr>
 		<td>
-			<a href="javascript:borderClick('img1')"><img id="img1" src="image/sample.png" width="150" height="100"></a>
+			<a href="javascript:borderClick('img1')"><img id="img1" src="image/pattern1.PNG" width="150" height="100"></a>
 			<!-- <input type="checkbox" name="image1"/> -->
 		</td>
 		<td>
-			<a href="javascript:borderClick('img2')"><img id="img2" src="image/sample.png" width="150" height="100"></a>
+			<a href="javascript:borderClick('img2')"><img id="img2" src="image/pattern2.PNG" width="150" height="100"></a>
 			<!-- <input type="checkbox" name="image2"/> -->
 		</td>
 		<td>
-			<a href="javascript:borderClick('img3')"><img id="img3" src="image/sample.png" width="150" height="100"></a>
+			<a href="javascript:borderClick('img3')"><img id="img3" src="image/pattern3.PNG" width="150" height="100"></a>
 			<!-- <input type="checkbox" name="image3"/> -->
 		</td>
 	</tr>
 	<tr>
 		<td>
-			<a href="javascript:borderClick('img4')"><img id="img4" src="image/sample.png" width="150" height="100"></a>
+			<a href="javascript:borderClick('img4')"><img id="img4" src="image/pattern4.PNG" width="150" height="100"></a>
 			<!-- <input type="checkbox" name="image4"/> -->
 		</td>
 		<td>
-			<a href="javascript:borderClick('img5')"><img id="img5" src="image/sample.png" width="150" height="100"></a>
+			<a href="javascript:borderClick('img5')"><img id="img5" src="image/pattern5.PNG" width="150" height="100"></a>
 			<!-- <input type="checkbox" name="image5"/> -->
 		</td>
 		<td>
-			<a href="javascript:borderClick('img6')"><img id="img6" src="image/sample.png" width="150" height="100"></a>
+			<a href="javascript:borderClick('img6')"><img id="img6" src="image/pattern6.PNG" width="150" height="100"></a>
 			<!-- <input type="checkbox" name="image6"/> -->
 		</td>
 	</tr>
 	<tr>
 		<td>
-			<a href="javascript:borderClick('img7')"><img id="img7" src="image/sample.png" width="150" height="100"></a>
+			<a href="javascript:borderClick('img7')"><img id="img7" src="image/pattern7.PNG" width="150" height="100"></a>
 			<!-- <input type="checkbox" name="image7"/> -->
 		</td>
 		<td>
-			<a href="javascript:borderClick('img8')"><img id="img8" src="image/sample.png" width="150" height="100"></a>
+			<a href="javascript:borderClick('img8')"><img id="img8" src="image/pattern8.PNG" width="150" height="100"></a>
 			<!-- <input type="checkbox" name="image8"/> -->
 		</td>
 		<td>
-			<a href="javascript:borderClick('img9')"><img id="img9" src="image/sample.png" width="150" height="100"></a>
+			<a href="javascript:borderClick('img9')"><img id="img9" src="image/pattern9.PNG" width="150" height="100"></a>
 			<!-- <input type="checkbox" name="image9"/> -->
 		</td>
 	</tr>
@@ -171,14 +172,6 @@ if ($b_end_page > $total_page){	//마지막 페이지가 총 페이지보다 클
 		<td><input class="form-control" type=text name="price1" size="20" /></td>
 		<td><font size="5"/> ~ </td>
 		<td><input class="form-control" type=text name="price2" size="20"/></td>
-	</tr>
-	<tr style="vertical-align:bottom;">
-		<td colspan="3" style="text-align:left;"><font size="5"><span class="glyphicon glyphicon-expand"></span> ROE</font></td>
-	</tr>
-	<tr style="vertical-align:top;">
-			<td> <input class="form-control" type=text name="roe1" size="20"/> </td>
-			<td><font size="5"/> ~ </td>
-			<td> <input class="form-control" type=text name="roe2" size="20" /> </td>
 	</tr>
 </table>
 </div>
@@ -275,11 +268,12 @@ if ($b_end_page > $total_page){	//마지막 페이지가 총 페이지보다 클
 			</td>
 		</tr>
 	</table>
+	<!--
 	<?
 		 $price1 = $_POST['price1'];
 		 $price2 = $_POST['price2'];
 		system("python3 /var/www/html/final/python/test1.py {$price1} {$price2}"); 
-	?>
+	?>-->
 	</form>
 </center>
 </body>
