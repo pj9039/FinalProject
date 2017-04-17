@@ -26,7 +26,7 @@ def getstockprice(shcode):
 
 
 # Get stockprice from Database by prices
-def makequerylist(p_low, p_high):
+def makequerylist(p_low, p_high):   # low price < x < high price
     # Open database connection
     myhost, myport, myuser, mypassword, mydb, mycharset = mysqlinfo.getmysqlinfo()
     conn = pymysql.connect(host=myhost, port=myport, user=myuser, password=mypassword, db=mydb, charset=mycharset)
@@ -35,8 +35,8 @@ def makequerylist(p_low, p_high):
     cursor = conn.cursor(pymysql.cursors.DictCursor)
 
     # Execute SQL
-    sql = "SELECT DISTINCT(shcode) FROM stockprice WHERE  %s < closeprice AND closeprice < %s AND marketdate=%s"
-    cursor.execute(sql, p_low, p_high, getlastestdate())
+    sql = "SELECT DISTINCT(shcode) FROM stockprice WHERE %s < closeprice AND closeprice < %s AND marketdate = %s"
+    cursor.execute(sql, (p_low, p_high, getlastestdate()))
 
     # disconnect
     conn.close()
@@ -58,7 +58,7 @@ def getlastestdate():
     conn = pymysql.connect(host=myhost, port=myport, user=myuser, password=mypassword, db=mydb, charset=mycharset)
 
     # create Dictionary Cursor from connection
-    cursor = conn.cursor(pymysql.cursors.DictCursor)
+    cursor = conn.cursor()#(pymysql.cursors.DictCursor)
 
     # Execute SQL
     sql = "SELECT marketdate from stockprice order by marketdate desc limit 1"
@@ -71,4 +71,4 @@ def getlastestdate():
     row = cursor.fetchall()
 
     # End of function
-    return row
+    return row[0]
