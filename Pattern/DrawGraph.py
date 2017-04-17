@@ -71,4 +71,4 @@ def drawgraph(shcode, startdate=0, period=0):
     plt.show()
 
     # End of function
-    return 0
+    return filename
