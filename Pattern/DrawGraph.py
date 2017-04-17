@@ -23,9 +23,7 @@ def drawgraph(shcode, startdate=0, period=0):
 
     # create List type array
     marketdate, openprice, closeprice, highprice, lowprice = [], [], [], [], []
-    # i = -1
     for row in rows:
-        # i += 1
         marketdate.append(dates.date2num(row['marketdate']))
         openprice.append(int(row['openprice']))
         closeprice.append(int(row['closeprice']))
@@ -74,12 +72,3 @@ def drawgraph(shcode, startdate=0, period=0):
 
     # End of function
     return 0
-
-
-
-# test function
-chk = drawgraph('000020', 356, 30)
-if chk == 0:
-    print("함수가 정상적으로 동작되었습니다.")
-else:
-    print("작업도중 에러가 발생했습니다.")
