@@ -34,6 +34,15 @@
 
 			img.classList.add("activeImg");
 	}
+/*
+	$(document).ready(function(){
+		$("input:radio[name=radio").click(function(){
+			OnClick();
+		})
+	});
+	function OnClick(){
+
+	}*/
 </script>
 </HEAD>
 <body>
@@ -56,44 +65,62 @@
 	<table width="600" height="500" border="0" style="text-align: center;">
 	<tr>
 		<td>
+			<label>
+  			<input type="radio" name="chkGraph" value="1" />
 			<a href="javascript:borderClick('img1')"><img id="img1" src="image/pattern1.PNG" width="150" height="100"></a>
-			<!-- <input type="checkbox" name="image1"/> -->
+			</label>
 		</td>
 		<td>
+			<label>
+  			<input type="radio" name="chkGraph" value="2" />
 			<a href="javascript:borderClick('img2')"><img id="img2" src="image/pattern2.PNG" width="150" height="100"></a>
-			<!-- <input type="checkbox" name="image2"/> -->
+			</label>
 		</td>
 		<td>
+			<label>
+  			<input type="radio" name="chkGraph" value="3" />
 			<a href="javascript:borderClick('img3')"><img id="img3" src="image/pattern3.PNG" width="150" height="100"></a>
-			<!-- <input type="checkbox" name="image3"/> -->
+			</label>
 		</td>
 	</tr>
 	<tr>
 		<td>
+			<label>
+  			<input type="radio" name="chkGraph" value="4" />
 			<a href="javascript:borderClick('img4')"><img id="img4" src="image/pattern4.PNG" width="150" height="100"></a>
-			<!-- <input type="checkbox" name="image4"/> -->
+			</label>
 		</td>
 		<td>
+			<label>
+  			<input type="radio" name="chkGraph" value="5" />
 			<a href="javascript:borderClick('img5')"><img id="img5" src="image/pattern5.PNG" width="150" height="100"></a>
-			<!-- <input type="checkbox" name="image5"/> -->
+			</label>
 		</td>
 		<td>
+			<label>
+  			<input type="radio" name="chkGraph" value="6" />
 			<a href="javascript:borderClick('img6')"><img id="img6" src="image/pattern6.PNG" width="150" height="100"></a>
-			<!-- <input type="checkbox" name="image6"/> -->
+			</label>
 		</td>
 	</tr>
 	<tr>
 		<td>
+			<label>
+  			<input type="radio" name="chkGraph" value="8" />
 			<a href="javascript:borderClick('img7')"><img id="img7" src="image/pattern7.PNG" width="150" height="100"></a>
-			<!-- <input type="checkbox" name="image7"/> -->
+			</label>
 		</td>
 		<td>
+			<label>
+  			<input type="radio" name="chkGraph" value="8" />
 			<a href="javascript:borderClick('img8')"><img id="img8" src="image/pattern8.PNG" width="150" height="100"></a>
-			<!-- <input type="checkbox" name="image8"/> -->
+			</label>
 		</td>
 		<td>
+			<label>
+  			<input type="radio" name="chkGraph" value="9" />
 			<a href="javascript:borderClick('img9')"><img id="img9" src="image/pattern9.PNG" width="150" height="100"></a>
-			<!-- <input type="checkbox" name="image9"/> -->
+			</label>
 		</td>
 	</tr>
 </table>
