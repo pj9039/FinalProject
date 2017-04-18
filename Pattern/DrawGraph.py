@@ -56,6 +56,23 @@ def drawgraph(shcode, startdate=0, period=0):
     ax.xaxis_date()
     ax.autoscale_view()
     ax.grid(True)
+    
+    
+    ##############################################
+    # 사각형그리기 연습
+    # fig2 = plt.figure()
+    # ax2 = fig.add_subplot(111, aspect='equal')
+    ax.add_patch(
+        patches.Rectangle(
+            (735700, 5000),     # (x,y)
+            400,            # width
+            4000,            # height
+            fill=False,      # remove background
+            linewidth=3
+        )
+    )
+    ##############################################
+    
 
     candlestick_ohlc(ax, quotes, colorup="red", colordown="blue", width=0.6)
     plt.setp(plt.gca().get_xticklabels(), rotation=45, horizontalalignment='right', size=10)
