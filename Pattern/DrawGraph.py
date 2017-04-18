@@ -2,6 +2,7 @@ from matplotlib.dates import DateFormatter, WeekdayLocator, DayLocator, MONDAY
 from matplotlib.finance import candlestick_ohlc
 import matplotlib.pyplot as plt
 import matplotlib.dates as dates
+import matplotlib.patches as patches
 from pandas import DataFrame
 from datetime import datetime
 import os
