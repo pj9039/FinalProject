@@ -45,3 +45,4 @@ def findpattern(p_type, p_low, p_high, period):
     print("--- processing time : %s seconds ---" % (time.time() - start_time))
 
     return data_array
+
