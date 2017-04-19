@@ -2,6 +2,7 @@ from matplotlib.dates import DateFormatter, WeekdayLocator, DayLocator, MONDAY
 from matplotlib.finance import candlestick_ohlc
 import matplotlib.pyplot as plt
 import matplotlib.dates as dates
+import matplotlib.patches as patches
 from pandas import DataFrame
 from datetime import datetime
 import os
@@ -23,9 +24,7 @@ def drawgraph(shcode, startdate=0, period=0):
 
     # create List type array
     marketdate, openprice, closeprice, highprice, lowprice = [], [], [], [], []
-    # i = -1
     for row in rows:
-        # i += 1
         marketdate.append(dates.date2num(row['marketdate']))
         openprice.append(int(row['openprice']))
         closeprice.append(int(row['closeprice']))
@@ -58,6 +57,23 @@ def drawgraph(shcode, startdate=0, period=0):
     ax.xaxis_date()
     ax.autoscale_view()
     ax.grid(True)
+    
+    
+    ##############################################
+    # 사각형그리기 연습
+    # fig2 = plt.figure()
+    # ax2 = fig.add_subplot(111, aspect='equal')
+    ax.add_patch(
+        patches.Rectangle(
+            (735700, 5000),     # (x,y)
+            400,            # width
+            4000,            # height
+            fill=False,      # remove background
+            linewidth=3
+        )
+    )
+    ##############################################
+    
 
     candlestick_ohlc(ax, quotes, colorup="red", colordown="blue", width=0.6)
     plt.setp(plt.gca().get_xticklabels(), rotation=45, horizontalalignment='right', size=10)
@@ -73,13 +89,4 @@ def drawgraph(shcode, startdate=0, period=0):
     plt.show()
 
     # End of function
-    return 0
-
-
-
-# test function
-chk = drawgraph('000020', 356, 30)
-if chk == 0:
-    print("함수가 정상적으로 동작되었습니다.")
-else:
-    print("작업도중 에러가 발생했습니다.")
+    return filename

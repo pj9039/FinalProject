@@ -1,6 +1,7 @@
 <!--DB 연동-->
 <?
-	$db = mysqli_connect("localhost","id","passwd","db",port);
+	//$db = mysqli_connect("localhost","id","passwd","db",port);
+$db =  mysqli_connect("localhost","root","rla123","stock", 533);
 	if(mysqli_connect_errno($db)){
 		echo "연결실패 : ".mysqli_connect_error();
 	} else {
