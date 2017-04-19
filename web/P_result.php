@@ -1,6 +1,7 @@
 <!--DB 연동-->
 <?
 	$db = mysqli_connect("localhost","id","passwd","db",port);
+	
 	if(mysqli_connect_errno($db)){
 		echo "연결실패 : ".mysqli_connect_error();
 	} else {
@@ -21,7 +22,8 @@
 	$price1 = ($_POST['price1']) ? $_POST['price1'] : $_GET['price1'];	//가격 불러오기
 	$price2 = ($_POST['price2']) ? $_POST['price2'] : $_GET['price2'];	//가격 불러오기
 
-	exec("python3 /var/www/html/final/python/Stock/Pattern/test.py {$img_v} {$price1} {$price2}",$output);	//test.py실행
+	//exec("python3 /var/www/html/final/python/Stock/Pattern/test.py {$img_v} {$price1} {$price2}",$output);	//test.py실행
+	exec("python3 ./python/Stock/Pattern/test.py {$img_v} {$price1} {$price2}",$output);	//test.py실행
 
 	$output_count = count($output);	//output개수
 	//var_dump($output);	//변수에 대한 정보 덤프

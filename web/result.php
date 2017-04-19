@@ -1,6 +1,5 @@
 <!--DB 연동-->
 <?
-	
 	$db = mysqli_connect("localhost","id","passwd","db",port);
 	if(mysqli_connect_errno($db)){
 		echo "연결실패 : ".mysqli_connect_error();
@@ -23,7 +22,7 @@
 	$price1 = ($_POST['price1']) ? $_POST['price1'] : $_GET['price1'];	//가격 불러오기
 	$price2 = ($_POST['price2']) ? $_POST['price2'] : $_GET['price2'];	//가격 불러오기
 
-	exec("python3 /var/www/html/final/python/Stock/Pattern/test.py {$img_v} {$price1} {$price2}",$output);	//test.py실행
+	exec("python3 ../Pattern/test.py {$img_v} {$price1} {$price2}",$output);	//test.py실행
 
 	$output_count = count($output);	//output개수
 	//var_dump($output);	//변수에 대한 정보 덤프
@@ -287,8 +286,7 @@ if ($b_end_page > $total_page){	//마지막 페이지가 총 페이지보다 클
 		</tr>
 	</table>
 	<?	//test.py실행시키고 test.png파일이 생성되고 test.png을 출력하기
-		//$str = system('python3 /var/www/html/final/python/test.py');
-		system('python3 /var/www/html/final/python/Stock/Pattern/DrawGraph.py {$shcode}');	
+		system('python3 ./python/Stock/Pattern/DrawGraph.py {$shcode}');	
 		echo $str
 	?>
 	<h2>그래프</h2>
