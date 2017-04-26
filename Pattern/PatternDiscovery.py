@@ -23,6 +23,7 @@ def findpattern(p_type, p_low, p_high, period):
         tmps = shquery.getstockprice(row)       # get stock data from DB
         temp_array = []     # stock price data
         pip_array = []      # list of found index
+        sim_array = []      # list of found index
         i = -1
         for tmp in tmps:   # append data for PIP
             i += 1
@@ -34,10 +35,14 @@ def findpattern(p_type, p_low, p_high, period):
             if r_row > 0.7:
                 print("종목코드 ", row, "에서 index가 ", k, "일 때, 피어슨상관계수 : ", r_row)
                 pip_array.append(k)  # k is index
+                sim_array.append(r_row)
+
 
         # fill data
-        data_array.append(row)
-        data_array.append(pip_array)
+        if pip_array:
+            data_array.append(row)
+            data_array.append(pip_array)
+            data_array.append(sim_array)
 
     print("┌기간=", period, "에서 패턴발견 알고리즘 적용결과 리스트 구현")
     print(data_array)
@@ -46,3 +51,7 @@ def findpattern(p_type, p_low, p_high, period):
 
     return data_array
 
+
+# execute as main
+if __name__ == "__main__":
+    findpattern(1, 10000, 10040, 30)
