@@ -7,6 +7,7 @@ from pandas import DataFrame
 from datetime import datetime
 import os
 import Pattern.QueryStockdata as shquery
+import sys
 
 
 # Draw real candlestick chart
@@ -90,3 +91,4 @@ def drawgraph(shcode, startdate=0, period=0):
 
     # End of function
     return filename
+

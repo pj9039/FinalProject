@@ -35,9 +35,12 @@ def findpattern(p_type, p_low, p_high, period):
                 print("종목코드 ", row, "에서 index가 ", k, "일 때, 피어슨상관계수 : ", r_row)
                 pip_array.append(k)  # k is index
 
+
+
         # fill data
-        data_array.append(row)
-        data_array.append(pip_array)
+        if pip_array:
+            data_array.append(row)
+            data_array.append(pip_array)
 
     print("┌기간=", period, "에서 패턴발견 알고리즘 적용결과 리스트 구현")
     print(data_array)
