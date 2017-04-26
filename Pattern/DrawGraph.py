@@ -10,7 +10,7 @@ import Pattern.QueryStockdata as shquery
 
 
 # Draw real candlestick chart
-def drawgraph(shcode, startdate=0, period=0):
+def drawgraph(shcode, startdate=0, period=0, discover=None, pearson=None):
     # 1st parameter, shcode is stock code.  # e.g., shcode = "000020"     #동화약품(000020)
     # 2nd parameter, startdate is an index of DB data.
     # 3rd parameter, period is a number of DB data from startdate. default 0 means all period.
@@ -51,29 +51,45 @@ def drawgraph(shcode, startdate=0, period=0):
 
     fig, ax = plt.subplots()
     fig.subplots_adjust(bottom=0.2)
-    ax.xaxis.set_major_locator(mondays)
-    ax.xaxis.set_minor_locator(alldays)
-    ax.xaxis.set_major_formatter(weekFormatter)
+    # ax.xaxis.set_major_locator(mondays)
+    # ax.xaxis.set_minor_locator(alldays)
+    # ax.xaxis.set_major_formatter(weekFormatter)
     ax.xaxis_date()
     ax.autoscale_view()
     ax.grid(True)
-    
-    
-    ##############################################
-    # 사각형그리기 연습
-    # fig2 = plt.figure()
-    # ax2 = fig.add_subplot(111, aspect='equal')
-    ax.add_patch(
-        patches.Rectangle(
-            (735700, 5000),     # (x,y)
-            400,            # width
-            4000,            # height
-            fill=False,      # remove background
-            linewidth=3
-        )
-    )
-    ##############################################
-    
+
+    # print(graph['marketdate'][396])
+    if discover is not None:
+        if len(discover) != len(pearson):
+            return -1;
+
+        j = -1
+        for i in discover:
+            j += 1
+
+            ymin, ymax = graph['highprice'][i], graph['lowprice'][i]    # initialize
+            for n in range(i, i+30):
+                ymin = min(ymin, graph['lowprice'][n])                  # min value
+                ymax = max(ymax, graph['highprice'][n])                 # max value
+
+            ax.set_title("Stock Code: "+shcode)                         # set graph title
+            ax.text(graph['marketdate'][i], ymax, str(float("{0:.2f}".format(pearson[j]*100)))+"%")    # print similarity percent (limiting floats to four decimal points)
+            if i+(30*2) < len(rows)-1:
+                earning = ((int(graph['closeprice'][i+60]) - int(graph['closeprice'][i+30])) / int(graph['closeprice'][i+30])) * 100     # calculate earning ratio
+                earning = round(earning, 2)
+                ax.text(graph['marketdate'][i+60], graph['highprice'][i+60], str(earning)+"%")  # print earning ratio
+
+            # Draw Rectangle
+            # ax.text(graph['marketdate'][i], ymax - ymin, str(pearson[j])+"%")  # print earning ratio
+            ax.add_patch(
+                patches.Rectangle(
+                    (graph['marketdate'][i], ymin),                      # (x,y)
+                    graph['marketdate'][i+30] - graph['marketdate'][i],  # width
+                    ymax - ymin,                                         # height
+                    fill=False,                                         # remove background
+                    linewidth=3
+                )
+            )
 
     candlestick_ohlc(ax, quotes, colorup="red", colordown="blue", width=0.6)
     plt.setp(plt.gca().get_xticklabels(), rotation=45, horizontalalignment='right', size=10)
@@ -90,3 +106,11 @@ def drawgraph(shcode, startdate=0, period=0):
 
     # End of function
     return filename
+
+
+# execute as main
+if __name__ == "__main__":
+    drawgraph('200050', 0, 0, [103, 177, 265, 294, 296, 319, 320, 431, 447],
+              [0.7858, 0.7068, 0.7511, 0.7452, 0.822, 0.7396, 0.7363, 0.7014, 0.7139])
+    # drawgraph('200050')
+# ['200050', [103, 177, 265, 294, 296, 319, 320, 431, 447], [0.7858, 0.7068, 0.7511, 0.7452, 0.822, 0.7396, 0.7363, 0.7014, 0.7139]]
