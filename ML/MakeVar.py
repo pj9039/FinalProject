@@ -4,9 +4,12 @@ from sklearn import preprocessing
 def MakeVar1(data, n):
     Var = []
     FinalData = []
+
     x_data = data[3:-1].astype(np.float32)  # 3행 6열
+
     basis = x_data[0]
-    x_data = preprocessing.normalize(x_data[1:], norm='l2')
+    #x_data = preprocessing.normalize(x_data[1:], norm='l2')
+    x_data = x_data[1:]
     if(n==2):
         for i in range(0, len(x_data)):
             for j in range(0, len(x_data)):

@@ -61,7 +61,7 @@ if __name__ == "__main__":
     print(shcodelist)
     XAQueryEvents.queryState = 0
     totalnum = len(shcodelist)
-    count = 0
+    count = 1
     cur = conn.cursor()
     todaydate = time.strftime("%Y%m%d") # 오늘 날짜
     cur.execute("select marketdate from stockprice order by marketdate desc limit 1") # DB안에있는 최신데이터 날짜를 얻기 위한 쿼리
