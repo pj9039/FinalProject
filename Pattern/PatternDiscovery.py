@@ -45,7 +45,8 @@ def findpattern(p_type, p_low, p_high, period):
             data_array.append(sim_array)
 
     print("┌기간=", period, "에서 패턴발견 알고리즘 적용결과 리스트 구현")
-    print(data_array)
+    for i in range(0,len(data_array)):
+        print(data_array[i])
     # measure of running-time
     print("--- processing time : %s seconds ---" % (time.time() - start_time))
 
