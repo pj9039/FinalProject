@@ -57,6 +57,9 @@ sample_array = [[0, 8000], [1, 4000], [2, 4000], [3, 8000], [4, 4000], [5, 4000]
 #sample_array = [[0, 8000], [1, 5500], [2, 6500], [3, 5500], [4, 6000], [5, 5000], [6, 4000]]    # Triangles,Descending, up breakout (6)
 #sample_array = [[0, 6000], [1, 5500], [2, 6500], [3, 6000], [4, 7000], [5, 6500], [6, 8000]]    # Three Rising Valleys, up breakout (4)
 #sample_array = [[0, 8000], [1, 6000], [2, 5500], [3, 5000], [4, 5500], [5, 6000], [6, 8000]]    # Rounding Bottoms, up breakout (5) 그림이 좀 이상...
+#sample_array = [[0, 4000], [1, 5250], [2, 6500], [3, 5000], [4,6500], [5, 6000], [6, 7500]]    # Cup with Handle
+#sample_array = [[0, 4000], [1, 4700], [2, 5400], [3, 6000], [4,5400], [5, 4700], [6, 7000]]    # Rounding Tops
+#sample_array = [[0, 6000], [1, 6500], [2, 6000], [3, 6250], [4,5000], [5, 6250], [6, 6000]]    # Bump-and-Run Reversal Bottoms
 
 for row in rows:
     i += 1
